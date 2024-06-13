@@ -138,7 +138,7 @@ GameObject:
   - component: {fileID: 6664034917252892990}
   - component: {fileID: 4907854821635153554}
   m_Layer: 0
-  m_Name: Glass
+  m_Name: GlassCapsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -255,7 +255,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
