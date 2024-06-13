@@ -52,5 +52,5 @@
         "Temp/": true
     },
     "dotnet.preferCSharpExtension": true,
-    "dotnet.defaultSolution": "AR_APP_FLOOR.sln"
+    "dotnet.defaultSolution": "AR_APP_CHEMISTRY.sln"
 }
