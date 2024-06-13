@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AtomGenerator : MonoBehaviour
 {
-    public GameObject electronPrefab;
+public GameObject electronPrefab;
     public Transform nucleus;
 
     // Define electron configurations for elements up to oxygen
@@ -68,7 +68,10 @@ public class AtomGenerator : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             Vector3 position = nucleus.position + Random.insideUnitSphere * shell * 0.5f; // Random position within the shell radius
-            Instantiate(electronPrefab, position, Quaternion.identity, nucleus);
+            GameObject electron = Instantiate(electronPrefab, position, Quaternion.identity, nucleus);
+            ElectronMovement movementScript = electron.AddComponent<ElectronMovement>();
+            movementScript.radius = shell * 0.5f;
+            movementScript.speed = 1.0f + i * 0.1f; // Slightly different speeds for visual variety
         }
     }
 
@@ -83,6 +86,7 @@ public class AtomGenerator : MonoBehaviour
             ElectronPOrbital orbitalScript = electron.AddComponent<ElectronPOrbital>();
             orbitalScript.axis = axis;
             orbitalScript.amplitude = shell; // Adjust amplitude based on shell number
+            orbitalScript.frequency = 1.0f + i * 0.1f; // Slightly different frequencies for visual variety
         }
     }
 }

@@ -4,17 +4,14 @@ using UnityEngine;
 
 public class ElectronMovement : MonoBehaviour
 {
-    [SerializeField]
-    private float radius = 1.0f;
-    
-    [SerializeField]
-    private float speed = 1.0f;
+    public float radius = 1.0f;
+    public float speed = 1.0f;
 
     private Vector3 center;
 
     void Start()
     {
-        center = transform.position;
+        center = transform.parent.position; // Center is the nucleus
     }
 
     void Update()

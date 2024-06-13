@@ -6,13 +6,13 @@ public class ElectronPOrbital : MonoBehaviour
 {
     public float amplitude = 1.0f;
     public float frequency = 1.0f;
-    public Vector3 axis = Vector3.right; // x, y, or z
+    public Vector3 axis = Vector3.right; // x, y, or z axis
 
     private Vector3 center;
 
     void Start()
     {
-        center = transform.position;
+        center = transform.parent.position; // Center is the nucleus
     }
 
     void Update()
