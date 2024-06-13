@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ElectronMovement : MonoBehaviour
 {
-    public float radius = 1.0f;
+    public float radius = 0.2f;
     public float speed = 1.0f;
 
     private Vector3 center;

@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class AtomGenerator : MonoBehaviour
 {
-public GameObject electronPrefab;
+    private int countForRotate;
+    public GameObject electronPrefab;
     public Transform nucleus;
 
     // Define electron configurations for elements up to oxygen
@@ -18,13 +20,18 @@ public GameObject electronPrefab;
         { 6, "1s2 2s2 2p2" },
         { 7, "1s2 2s2 2p3" },
         { 8, "1s2 2s2 2p4" },
+        { 9, "1s2 2s2 2p5" },  // Fluorine
+        { 10, "1s2 2s2 2p6" }, // Neon
+        { 11, "1s2 2s2 2p6 3s1" }, // Sodium
+        { 12, "1s2 2s2 2p6 3s2" }, // Magnesium
         // Add more elements as needed
     };
 
     void Start()
     {
-        int atomicNumber = 8; // Example: Oxygen
+        int atomicNumber = 12; // Example: Oxygen
         GenerateAtom(atomicNumber);
+        countForRotate = 0;
     }
 
     void GenerateAtom(int atomicNumber)
@@ -70,8 +77,20 @@ public GameObject electronPrefab;
             Vector3 position = nucleus.position + Random.insideUnitSphere * shell * 0.5f; // Random position within the shell radius
             GameObject electron = Instantiate(electronPrefab, position, Quaternion.identity, nucleus);
             ElectronMovement movementScript = electron.AddComponent<ElectronMovement>();
-            movementScript.radius = shell * 0.5f;
-            movementScript.speed = 1.0f + i * 0.1f; // Slightly different speeds for visual variety
+            if(countForRotate!=1)
+            {
+                movementScript.radius = shell * 0.2f;
+                movementScript.speed = 1.0f + i * 0.1f; // Slightly different speeds for visual variety
+                countForRotate++;
+            }
+            else
+            {
+                movementScript.radius = shell * -0.2f;
+                movementScript.speed = 1.0f + i * 0.1f; // Slightly different speeds for visual variety
+                countForRotate = 0;
+            }
+            
+            
         }
     }
 
@@ -85,7 +104,7 @@ public GameObject electronPrefab;
             GameObject electron = Instantiate(electronPrefab, nucleus.position, Quaternion.identity, nucleus);
             ElectronPOrbital orbitalScript = electron.AddComponent<ElectronPOrbital>();
             orbitalScript.axis = axis;
-            orbitalScript.amplitude = shell; // Adjust amplitude based on shell number
+            orbitalScript.amplitude = shell * 0.2f; // Adjust amplitude based on shell number
             orbitalScript.frequency = 1.0f + i * 0.1f; // Slightly different frequencies for visual variety
         }
     }

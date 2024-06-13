@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ElectronPOrbital : MonoBehaviour
 {
-    public float amplitude = 1.0f;
+    public float amplitude = 0.2f;
     public float frequency = 1.0f;
     public Vector3 axis = Vector3.right; // x, y, or z axis
 
