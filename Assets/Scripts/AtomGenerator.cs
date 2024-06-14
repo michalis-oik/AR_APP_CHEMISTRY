@@ -5,11 +5,10 @@ using UnityEngine.InputSystem;
 
 public class AtomGenerator : MonoBehaviour
 {
-    private int countForRotate;
     public GameObject electronPrefab;
     public Transform nucleus;
 
-    // Define electron configurations for elements up to oxygen
+    // Define electron configurations for elements up to a higher atomic number
     private Dictionary<int, string> electronConfigurations = new Dictionary<int, string>
     {
         { 1, "1s1" },
@@ -29,9 +28,8 @@ public class AtomGenerator : MonoBehaviour
 
     void Start()
     {
-        int atomicNumber = 12; // Example: Oxygen
+        int atomicNumber = 11; // Example: Sodium
         GenerateAtom(atomicNumber);
-        countForRotate = 0;
     }
 
     void GenerateAtom(int atomicNumber)
@@ -49,6 +47,18 @@ public class AtomGenerator : MonoBehaviour
 
     void PlaceElectrons(string configuration)
     {
+        if (electronPrefab == null)
+        {
+            Debug.LogError("electronPrefab is not assigned in the inspector.");
+            return;
+        }
+
+        if (nucleus == null)
+        {
+            Debug.LogError("nucleus is not assigned in the inspector.");
+            return;
+        }
+
         string[] orbitals = configuration.Split(' ');
 
         foreach (string orbital in orbitals)
@@ -72,40 +82,35 @@ public class AtomGenerator : MonoBehaviour
 
     void PlaceElectronsInSOrbital(int shell, int count)
     {
+        float orbitalRadius = shell * 0.2f; // Adjust the multiplier to make the orbit smaller
+
         for (int i = 0; i < count; i++)
         {
-            Vector3 position = nucleus.position + Random.insideUnitSphere * shell * 0.5f; // Random position within the shell radius
+            Vector3 position = nucleus.position + Random.insideUnitSphere * orbitalRadius;
             GameObject electron = Instantiate(electronPrefab, position, Quaternion.identity, nucleus);
-            ElectronMovement movementScript = electron.AddComponent<ElectronMovement>();
-            if(countForRotate!=1)
-            {
-                movementScript.radius = shell * 0.2f;
-                movementScript.speed = 1.0f + i * 0.1f; // Slightly different speeds for visual variety
-                countForRotate++;
-            }
-            else
-            {
-                movementScript.radius = shell * -0.2f;
-                movementScript.speed = 1.0f + i * 0.1f; // Slightly different speeds for visual variety
-                countForRotate = 0;
-            }
-            
-            
+            ElectronOrbital orbitalScript = electron.GetComponent<ElectronOrbital>();
+            orbitalScript.isSOrbital = true;
+            orbitalScript.amplitude = orbitalRadius;
+            orbitalScript.frequency = 1.0f + i * 0.1f; // Slightly different frequencies for visual variety
+            orbitalScript.angleOffset = i * Mathf.PI / count; // Different angles for each electron
         }
     }
 
     void PlaceElectronsInPOrbital(int shell, int count)
     {
+        float orbitalAmplitude = shell * 0.2f; // Adjust the multiplier to make the orbit smaller
         Vector3[] axes = { Vector3.right, Vector3.up, Vector3.forward };
 
         for (int i = 0; i < count; i++)
         {
             Vector3 axis = axes[i % 3]; // Cycle through x, y, z axes
             GameObject electron = Instantiate(electronPrefab, nucleus.position, Quaternion.identity, nucleus);
-            ElectronPOrbital orbitalScript = electron.AddComponent<ElectronPOrbital>();
+            ElectronOrbital orbitalScript = electron.GetComponent<ElectronOrbital>();
+            orbitalScript.isSOrbital = false;
             orbitalScript.axis = axis;
-            orbitalScript.amplitude = shell * 0.2f; // Adjust amplitude based on shell number
+            orbitalScript.amplitude = orbitalAmplitude;
             orbitalScript.frequency = 1.0f + i * 0.1f; // Slightly different frequencies for visual variety
+            orbitalScript.angleOffset = i * Mathf.PI / count; // Different angles for each electron
         }
     }
 }
