@@ -1770,7 +1770,7 @@ MonoBehaviour:
   electronPrefab: {fileID: 3840280563202487684, guid: adf0f705989b0f9489db3245059d4ca7,
     type: 3}
   nucleus: {fileID: 1230323201}
-  atomicNumber: 20
+  atomicNumber: 25
 --- !u!4 &1762769559
 Transform:
   m_ObjectHideFlags: 0
