@@ -9,6 +9,7 @@ public class ElectronOrbital : MonoBehaviour
     public float frequency = 1.0f;
     public bool isSOrbital = false; // Flag to differentiate "s" and "p" orbitals
     public float angleOffset = 0.0f; // Angular offset for unique electron paths
+    public float spinDirection = 1.0f; // Direction of the electron's spin
 
     private Vector3 center;
 
@@ -19,7 +20,7 @@ public class ElectronOrbital : MonoBehaviour
 
     void Update()
     {
-        float angle = frequency * Time.time + angleOffset;
+        float angle = frequency * Time.time * spinDirection + angleOffset;
 
         if (isSOrbital)
         {

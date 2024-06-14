@@ -7,8 +7,9 @@ public class AtomGenerator : MonoBehaviour
 {
     public GameObject electronPrefab;
     public Transform nucleus;
+    public int atomicNumber = 1;
 
-    // Define electron configurations for elements up to Argon (atomic number 18)
+    // Define electron configurations for elements up to argon (atomic number 18)
     private Dictionary<int, string> electronConfigurations = new Dictionary<int, string>
     {
         { 1, "1s1" },
@@ -19,21 +20,33 @@ public class AtomGenerator : MonoBehaviour
         { 6, "1s2 2s2 2p2" },
         { 7, "1s2 2s2 2p3" },
         { 8, "1s2 2s2 2p4" },
-        { 9, "1s2 2s2 2p5" },  // Fluorine
-        { 10, "1s2 2s2 2p6" }, // Neon
-        { 11, "1s2 2s2 2p6 3s1" }, // Sodium
-        { 12, "1s2 2s2 2p6 3s2" }, // Magnesium
-        { 13, "1s2 2s2 2p6 3s2 3p1" }, // Aluminum
-        { 14, "1s2 2s2 2p6 3s2 3p2" }, // Silicon
-        { 15, "1s2 2s2 2p6 3s2 3p3" }, // Phosphorus
-        { 16, "1s2 2s2 2p6 3s2 3p4" }, // Sulfur
-        { 17, "1s2 2s2 2p6 3s2 3p5" }, // Chlorine
-        { 18, "1s2 2s2 2p6 3s2 3p6" }, // Argon
+        { 9, "1s2 2s2 2p5" },
+        { 10, "1s2 2s2 2p6" },
+        { 11, "1s2 2s2 2p6 3s1" },
+        { 12, "1s2 2s2 2p6 3s2" },
+        { 13, "1s2 2s2 2p6 3s2 3p1" },
+        { 14, "1s2 2s2 2p6 3s2 3p2" },
+        { 15, "1s2 2s2 2p6 3s2 3p3" },
+        { 16, "1s2 2s2 2p6 3s2 3p4" },
+        { 17, "1s2 2s2 2p6 3s2 3p5" },
+        { 18, "1s2 2s2 2p6 3s2 3p6" },
+        { 19, "1s2 2s2 2p6 3s2 3p6 4s1" },
+        { 20, "1s2 2s2 2p6 3s2 3p6 4s2" },
+        { 21, "1s2 2s2 2p6 3s2 3p6 4s2 3d1" },
+        { 22, "1s2 2s2 2p6 3s2 3p6 4s2 3d2" },
+        { 23, "1s2 2s2 2p6 3s2 3p6 4s2 3d3" },
+        { 24, "1s2 2s2 2p6 3s2 3p6 4s1 3d5" },
+        { 25, "1s2 2s2 2p6 3s2 3p6 4s2 3d5" },
+        { 26, "1s2 2s2 2p6 3s2 3p6 4s2 3d6" },
+        { 27, "1s2 2s2 2p6 3s2 3p6 4s2 3d7" },
+        { 28, "1s2 2s2 2p6 3s2 3p6 4s2 3d8" },
+        { 29, "1s2 2s2 2p6 3s2 3p6 4s1 3d10" },
+        { 30, "1s2 2s2 2p6 3s2 3p6 4s2 3d10" },
     };
 
     void Start()
     {
-        int atomicNumber = 18; // Example: Argon
+        //int atomicNumber = 30; // Example: Zinc
         GenerateAtom(atomicNumber);
     }
 
@@ -80,7 +93,10 @@ public class AtomGenerator : MonoBehaviour
                 case 'p':
                     PlaceElectronsInPOrbital(shell - '0', electronCount);
                     break;
-                // Handle 'd' and 'f' orbitals similarly if needed in the future
+                case 'd':
+                    PlaceElectronsInDOrbital(shell - '0', electronCount);
+                    break;
+                // Handle 'f' orbitals similarly
             }
         }
     }
@@ -108,6 +124,7 @@ public class AtomGenerator : MonoBehaviour
             orbitalScript.amplitude = orbitalRadius;
             orbitalScript.frequency = 1.0f + i * 0.1f; // Slightly different frequencies for visual variety
             orbitalScript.angleOffset = i * Mathf.PI / count; // Different angles for each electron
+            orbitalScript.spinDirection = (i % 2 == 0) ? 1.0f : -1.0f; // Alternate spin direction
         }
     }
 
@@ -136,6 +153,37 @@ public class AtomGenerator : MonoBehaviour
             orbitalScript.amplitude = orbitalAmplitude;
             orbitalScript.frequency = 1.0f + i * 0.1f; // Slightly different frequencies for visual variety
             orbitalScript.angleOffset = i * Mathf.PI / count; // Different angles for each electron
+            orbitalScript.spinDirection = (i % 2 == 0) ? 1.0f : -1.0f; // Alternate spin direction
+        }
+    }
+
+    void PlaceElectronsInDOrbital(int shell, int count)
+    {
+        float orbitalAmplitude = shell * 0.2f; // Adjust the multiplier to make the orbit smaller
+        Vector3[] axes = { Vector3.right, Vector3.up, Vector3.forward, 
+                           new Vector3(1, 1, 0), new Vector3(1, 0, 1) };
+
+        for (int i = 0; i < count; i++)
+        {
+            Vector3 axis = axes[i % 5]; // Cycle through x, y, z, xy, xz axes
+            GameObject electron = Instantiate(electronPrefab, nucleus.position, Quaternion.identity, nucleus);
+            if (electron == null)
+            {
+                Debug.LogError("Failed to instantiate electron prefab.");
+                continue;
+            }
+            ElectronOrbital orbitalScript = electron.GetComponent<ElectronOrbital>();
+            if (orbitalScript == null)
+            {
+                Debug.LogError("Electron prefab does not have the ElectronOrbital component.");
+                continue;
+            }
+            orbitalScript.isSOrbital = false;
+            orbitalScript.axis = axis;
+            orbitalScript.amplitude = orbitalAmplitude;
+            orbitalScript.frequency = 1.0f + i * 0.1f; // Slightly different frequencies for visual variety
+            orbitalScript.angleOffset = i * Mathf.PI / count; // Different angles for each electron
+            orbitalScript.spinDirection = (i % 2 == 0) ? 1.0f : -1.0f; // Alternate spin direction
         }
     }
 }
