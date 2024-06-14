@@ -8,7 +8,7 @@ public class AtomGenerator : MonoBehaviour
     public GameObject electronPrefab;
     public Transform nucleus;
 
-    // Define electron configurations for elements up to a higher atomic number
+    // Define electron configurations for elements up to Argon (atomic number 18)
     private Dictionary<int, string> electronConfigurations = new Dictionary<int, string>
     {
         { 1, "1s1" },
@@ -23,12 +23,17 @@ public class AtomGenerator : MonoBehaviour
         { 10, "1s2 2s2 2p6" }, // Neon
         { 11, "1s2 2s2 2p6 3s1" }, // Sodium
         { 12, "1s2 2s2 2p6 3s2" }, // Magnesium
-        // Add more elements as needed
+        { 13, "1s2 2s2 2p6 3s2 3p1" }, // Aluminum
+        { 14, "1s2 2s2 2p6 3s2 3p2" }, // Silicon
+        { 15, "1s2 2s2 2p6 3s2 3p3" }, // Phosphorus
+        { 16, "1s2 2s2 2p6 3s2 3p4" }, // Sulfur
+        { 17, "1s2 2s2 2p6 3s2 3p5" }, // Chlorine
+        { 18, "1s2 2s2 2p6 3s2 3p6" }, // Argon
     };
 
     void Start()
     {
-        int atomicNumber = 11; // Example: Sodium
+        int atomicNumber = 18; // Example: Argon
         GenerateAtom(atomicNumber);
     }
 
@@ -75,7 +80,7 @@ public class AtomGenerator : MonoBehaviour
                 case 'p':
                     PlaceElectronsInPOrbital(shell - '0', electronCount);
                     break;
-                // Handle 'd' and 'f' orbitals similarly
+                // Handle 'd' and 'f' orbitals similarly if needed in the future
             }
         }
     }
@@ -88,7 +93,17 @@ public class AtomGenerator : MonoBehaviour
         {
             Vector3 position = nucleus.position + Random.insideUnitSphere * orbitalRadius;
             GameObject electron = Instantiate(electronPrefab, position, Quaternion.identity, nucleus);
+            if (electron == null)
+            {
+                Debug.LogError("Failed to instantiate electron prefab.");
+                continue;
+            }
             ElectronOrbital orbitalScript = electron.GetComponent<ElectronOrbital>();
+            if (orbitalScript == null)
+            {
+                Debug.LogError("Electron prefab does not have the ElectronOrbital component.");
+                continue;
+            }
             orbitalScript.isSOrbital = true;
             orbitalScript.amplitude = orbitalRadius;
             orbitalScript.frequency = 1.0f + i * 0.1f; // Slightly different frequencies for visual variety
@@ -105,7 +120,17 @@ public class AtomGenerator : MonoBehaviour
         {
             Vector3 axis = axes[i % 3]; // Cycle through x, y, z axes
             GameObject electron = Instantiate(electronPrefab, nucleus.position, Quaternion.identity, nucleus);
+            if (electron == null)
+            {
+                Debug.LogError("Failed to instantiate electron prefab.");
+                continue;
+            }
             ElectronOrbital orbitalScript = electron.GetComponent<ElectronOrbital>();
+            if (orbitalScript == null)
+            {
+                Debug.LogError("Electron prefab does not have the ElectronOrbital component.");
+                continue;
+            }
             orbitalScript.isSOrbital = false;
             orbitalScript.axis = axis;
             orbitalScript.amplitude = orbitalAmplitude;
