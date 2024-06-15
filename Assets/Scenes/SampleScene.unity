@@ -766,7 +766,7 @@ MonoBehaviour:
   baseRadius: 0.2
   orbitLineWidth: 0.003
   baseOrbitSpeed: 0.4
-  protonNeutronAttractionForce: 0.3
+  protonNeutronAttractionForce: 1
 --- !u!4 &615336966
 Transform:
   m_ObjectHideFlags: 0

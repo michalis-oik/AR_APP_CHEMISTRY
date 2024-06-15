@@ -63,6 +63,11 @@ public class BohrModelAtomGenerator : MonoBehaviour
         GenerateAtom(atomicNumber, neutronNumber);
     }
 
+    private void Update() 
+    {
+        
+    }
+
     void GenerateAtom(int atomicNumber, int neutronNumber)
     {
         PlaceProtonsAndNeutrons(atomicNumber, neutronNumber);
@@ -185,5 +190,10 @@ public class BohrModelAtomGenerator : MonoBehaviour
         }
 
         lineRenderer.SetPositions(positions);
+        orbitLine.transform.parent = nucleus.transform;
+
+        // Optionally, you can adjust the position and rotation relative to the parent if needed
+        orbitLine.transform.localPosition = Vector3.zero;
+        orbitLine.transform.localRotation = Quaternion.identity;
     }
 }
