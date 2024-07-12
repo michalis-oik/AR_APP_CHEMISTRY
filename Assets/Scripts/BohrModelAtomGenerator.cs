@@ -15,6 +15,7 @@ public class BohrModelAtomGenerator : MonoBehaviour
     public float protonNeutronAttractionForce = 1.0f; // Attraction force for protons and neutrons
 
     private Transform nucleus; // Parent object to hold all elements
+    private Vector3 nucleusPosition; // Store the current position of the nucleus
 
     private Dictionary<int, int[]> electronConfigurations = new Dictionary<int, int[]>
     {
@@ -52,6 +53,8 @@ public class BohrModelAtomGenerator : MonoBehaviour
         { 30, new int[] { 2, 8, 18, 2 } } // Zinc
     };
 
+    private List<GameObject> orbitLines = new List<GameObject>(); // Store references to created orbit lines
+
     void Start()
     {
         int atomicNumber = 30; // Example: Zinc
@@ -59,13 +62,18 @@ public class BohrModelAtomGenerator : MonoBehaviour
 
         // Create a nucleus object as the parent
         nucleus = new GameObject("Nucleus").transform;
+        nucleusPosition = nucleus.position;
 
         GenerateAtom(atomicNumber, neutronNumber);
     }
 
-    private void Update() 
+    private void Update()
     {
-        
+        // Example: Update the nucleus position based on user input or other game logic
+        nucleusPosition = nucleus.position;
+
+        // Update electron positions
+        UpdateElectronPositions();
     }
 
     void GenerateAtom(int atomicNumber, int neutronNumber)
@@ -181,19 +189,56 @@ public class BohrModelAtomGenerator : MonoBehaviour
         lineRenderer.endColor = orbitColor;
 
         Vector3[] positions = new Vector3[lineRenderer.positionCount];
-        for (int i = 0; i < lineRenderer.positionCount; i++)
-        {
-            float angle = i * Mathf.PI * 2 / lineRenderer.positionCount;
-            float x = Mathf.Cos(angle) * radius;
-            float z = Mathf.Sin(angle) * radius;
-            positions[i] = new Vector3(x, 0, z) + nucleus.position;
-        }
-
-        lineRenderer.SetPositions(positions);
-        orbitLine.transform.parent = nucleus.transform;
-
-        // Optionally, you can adjust the position and rotation relative to the parent if needed
-        orbitLine.transform.localPosition = Vector3.zero;
-        orbitLine.transform.localRotation = Quaternion.identity;
+    for (int i = 0; i < lineRenderer.positionCount; i++)
+    {
+        float angle = i * Mathf.PI * 2 / lineRenderer.positionCount;
+        float x = Mathf.Cos(angle) * radius;
+        float z = Mathf.Sin(angle) * radius;
+        positions[i] = new Vector3(x, 0, z) + nucleus.position;
     }
+
+    lineRenderer.SetPositions(positions);
+    orbitLine.transform.parent = nucleus.transform;
+
+    // Optionally, you can adjust the position and rotation relative to the parent if needed
+    orbitLine.transform.localPosition = Vector3.zero;
+    orbitLine.transform.localRotation = Quaternion.identity;
+
+    // Add the orbit line to the list for later reference
+    orbitLines.Add(orbitLine);
+}
+
+void UpdateElectronPositions()
+{
+    // Update electron positions based on the current nucleus position
+    foreach (Transform child in nucleus)
+    {
+        BohrElectronOrbital orbitalScript = child.GetComponent<BohrElectronOrbital>();
+        if (orbitalScript != null)
+        {
+            float angle = Time.time * orbitalScript.orbitSpeed + orbitalScript.angleOffset;
+            Vector3 offset = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * orbitalScript.orbitRadius;
+            child.position = orbitalScript.orbitCenter + offset;
+        }
+    }
+
+    // Update orbit lines based on the current nucleus position
+    foreach (GameObject orbitLine in orbitLines)
+    {
+        LineRenderer lineRenderer = orbitLine.GetComponent<LineRenderer>();
+        if (lineRenderer != null)
+        {
+            float radius = lineRenderer.GetPosition(0).magnitude;
+            Vector3[] positions = new Vector3[lineRenderer.positionCount];
+            for (int j = 0; j < lineRenderer.positionCount; j++)
+            {
+                float angle = j * Mathf.PI * 2 / lineRenderer.positionCount;
+                float x = Mathf.Cos(angle) * radius;
+                float z = Mathf.Sin(angle) * radius;
+                positions[j] = new Vector3(x, 0, z) + nucleus.position;
+            }
+            lineRenderer.SetPositions(positions);
+        }
+    }
+}
 }
